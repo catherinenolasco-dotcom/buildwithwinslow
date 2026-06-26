@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Build with Winslow — Jul 9 Demo Previews</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:      #0F1C2E;
+    --navy-mid:  #1A2E45;
+    --sand:      #F7F4EE;
+    --sand-dark: #EDE9E0;
+    --teal:      #0EA5A0;
+    --teal-light:#E0F5F4;
+    --coral:     #E8624A;
+    --coral-light:#FDEEE9;
+    --slate:     #4A5568;
+    --mist:      #8898AA;
+    --white:     #FFFFFF;
+    --border:    #DDD8CF;
+    --purple:    #7C5CBF;
+  }
+
+  body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--navy); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .site-header { background: var(--navy); padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+  .site-header h1 { font-family: 'Fraunces', serif; font-size: 20px; color: var(--white); font-weight: 600; }
+  .site-header p  { font-size: 12px; color: var(--mist); margin-top: 2px; }
+  .header-badge { background: var(--teal-light); color: var(--teal); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .04em; text-transform: uppercase; }
+
+  /* ── TABS ── */
+  .tab-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 28px; display: flex; gap: 4px; overflow-x: auto; }
+  .tab-btn { background: none; border: none; border-bottom: 2.5px solid transparent; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; color: var(--slate); padding: 14px 16px; white-space: nowrap; transition: color .15s; }
+  .tab-btn.active { font-weight: 600; color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 32px 28px; max-width: 800px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* ── CARDS ── */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; }
+
+  /* ── FORMS ── */
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-row { margin-bottom: 16px; }
+  label.field-label { display: block; font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  input[type=text], input[type=date], select, textarea {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif;
+    color: var(--navy); background: var(--white); outline: none;
+    appearance: none; -webkit-appearance: none;
+  }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A5568' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* ── BUTTONS ── */
+  .btn { display: inline-block; border: none; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; padding: 10px 22px; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--teal); color: var(--white); }
+  .btn-ghost   { background: var(--white); color: var(--slate); border: 1.5px solid var(--border); }
+  .btn-sm      { font-size: 12px; padding: 6px 14px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+
+  /* ── CHECKLIST ── */
+  .check-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); background: var(--white); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .check-box.checked { border-color: var(--teal); background: var(--teal); }
+  .check-box .tick { color: var(--white); font-size: 11px; font-weight: 700; display: none; }
+  .check-box.checked .tick { display: block; }
+  .check-text { font-size: 14px; color: var(--navy); }
+  .check-text.done { text-decoration: line-through; color: var(--mist); }
+
+  /* ── FAQ ── */
+  .faq-q { font-weight: 600; font-size: 14px; color: var(--navy); margin-bottom: 4px; }
+  .faq-a { font-size: 14px; color: var(--slate); line-height: 1.65; }
+  .faq-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .faq-item:last-child { border-bottom: none; }
+
+  /* ── VALUES ── */
+  .value-card { padding: 28px 0; border-bottom: 1px solid var(--border); display: flex; gap: 18px; }
+  .value-card:last-child { border-bottom: none; }
+  .value-stripe { width: 4px; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+  .value-body h3 { font-family: 'Fraunces', serif; font-size: 22px; color: var(--navy); margin-bottom: 8px; font-weight: 600; }
+  .value-desc { font-size: 14px; color: var(--slate); line-height: 1.7; margin-bottom: 14px; }
+  .value-look { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; font-size: 14px; color: var(--slate); }
+  .value-arrow { font-weight: 700; flex-shrink: 0; }
+  .oob { background: var(--coral-light); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--coral); margin-top: 12px; }
+
+  /* ── COMMAND CENTER ── */
+  .cc-shell { display: flex; height: 540px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .cc-sidebar { width: 210px; background: var(--navy); flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; }
+  .cc-sidebar-head { padding: 20px 16px 8px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mist); }
+  .cc-today-btn { margin: 0 10px 8px; background: transparent; border: none; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--mist); padding: 9px 12px; text-align: left; transition: background .15s, color .15s; }
+  .cc-today-btn.active, .cc-today-btn:hover { background: var(--teal); color: var(--white); }
+  .cc-section-label { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #4A5568; }
+  .cc-client-btn { background: transparent; border: none; border-left: 3px solid transparent; cursor: pointer; font-family: 'Inter', sans-serif; padding: 10px 16px; text-align: left; width: 100%; transition: all .15s; }
+  .cc-client-btn.active { background: rgba(14,165,160,.15); border-left-color: var(--teal); }
+  .cc-client-btn .name { font-size: 13px; color: var(--mist); font-weight: 400; }
+  .cc-client-btn.active .name { color: var(--white); font-weight: 600; }
+  .cc-client-btn .meta { font-size: 11px; color: #4A5568; margin-top: 2px; }
+  .cc-main { flex: 1; overflow-y: auto; padding: 20px; }
+  .cc-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .cc-metric { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .cc-metric .metric-label { font-size: 11px; color: var(--mist); font-weight: 600; margin-bottom: 4px; letter-spacing: .04em; text-transform: uppercase; }
+  .cc-metric .metric-value { font-size: 28px; font-weight: 700; }
+  .task-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .task-row:last-child { border-bottom: none; }
+  .task-box { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border); background: var(--white); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .task-box.done { border-color: var(--teal); background: var(--teal); }
+  .task-text { flex: 1; font-size: 13px; color: var(--navy); }
+  .task-text.done { text-decoration: line-through; color: var(--mist); }
+  .task-due { font-size: 11px; font-weight: 600; color: var(--coral); }
+  .deadline-row { font-size: 13px; color: var(--slate); padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .deadline-row:last-child { border-bottom: none; }
+  .pipeline-row { margin-bottom: 10px; }
+  .pipeline-row-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); margin-bottom: 4px; }
+  .pipeline-track { height: 6px; background: var(--sand-dark); border-radius: 3px; }
+  .pipeline-fill  { height: 6px; border-radius: 3px; transition: width .4s; }
+  .today-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--white); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
+  .today-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); flex-shrink: 0; }
+  .today-text { flex: 1; }
+  .today-text .t-task { font-size: 13px; color: var(--navy); font-weight: 500; }
+  .today-text .t-client { font-size: 11px; color: var(--mist); margin-top: 2px; }
+  .today-due { font-size: 11px; font-weight: 600; color: var(--coral); }
+
+  /* ── MISC ── */
+  .page-title { font-family: 'Fraunces', serif; font-size: 24px; color: var(--navy); margin-bottom: 4px; font-weight: 600; }
+  .page-sub   { font-size: 13px; color: var(--mist); margin-bottom: 24px; }
+  .result-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .result-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--navy); font-weight: 600; }
+  .result-meta  { font-size: 13px; color: var(--mist); margin-top: 3px; }
+  .result-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .values-hero { background: var(--navy); border-radius: 12px 12px 0 0; padding: 52px 32px 44px; text-align: center; margin-bottom: 0; }
+  .values-hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+  .values-hero-title { font-family: 'Fraunces', serif; font-size: 36px; color: var(--white); line-height: 1.15; margin-bottom: 14px; font-weight: 600; }
+  .values-hero-sub { font-size: 15px; color: var(--mist); max-width: 420px; margin: 0 auto; line-height: 1.6; }
+  .values-body { background: var(--sand); border-radius: 0 0 12px 12px; padding: 8px 28px 28px; }
+  .values-footer { background: var(--navy); border-radius: 10px; padding: 28px 24px; text-align: center; margin-top: 28px; }
+  .values-footer-title { font-family: 'Fraunces', serif; font-size: 18px; color: var(--white); margin-bottom: 8px; font-weight: 600; }
+  .values-footer-sub { font-size: 13px; color: var(--mist); }
+  .hidden { display: none; }
+  .site-footer { text-align: center; padding: 20px 24px 36px; font-size: 12px; color: var(--mist); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="site-header">
+  <div>
+    <h1>Build with Winslow</h1>
+    <p>Jul 9 · Demo previews for Niel and Ash</p>
+  </div>
+  <span class="header-badge">4 builds · 0 PII</span>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('onboarding', this)">1 · Onboarding checklist</button>
+  <button class="tab-btn" onclick="switchTab('benefits', this)">2 · Benefits FAQ</button>
+  <button class="tab-btn" onclick="switchTab('values', this)">3 · Values microsite</button>
+  <button class="tab-btn" onclick="switchTab('command', this)">4 · Command center</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PANEL 1: ONBOARDING CHECKLIST
+═══════════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-onboarding">
+
+  <!-- FORM -->
+  <div id="ob-form">
+    <div class="page-title">New hire onboarding checklist</div>
+    <div class="page-sub">Department-specific tasks from Pre-Start through 90 days — no PII required</div>
+    <div class="card" style="max-width:540px">
+      <div class="form-grid-2">
+        <div><label class="field-label">New hire name</label><input type="text" id="ob-name" placeholder="Alex Rivera" /></div>
+        <div><label class="field-label">Job title</label><input type="text" id="ob-title" placeholder="Backend Engineer" /></div>
+      </div>
+      <div class="form-row">
+        <label class="field-label">Department</label>
+        <select id="ob-dept">
+          <option>Engineering</option><option>Sales</option><option>People Ops</option>
+          <option>Marketing</option><option>Finance</option><option>Customer Success</option>
+        </select>
+      </div>
+      <div class="form-grid-2">
+        <div><label class="field-label">Start date</label><input type="date" id="ob-start" /></div>
+        <div><label class="field-label">Work location</label>
+          <select id="ob-location"><option>Remote</option><option>Hybrid</option><option>On-site</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="field-label">Company name</label>
+        <input type="text" id="ob-company" placeholder="Luminary Labs" />
+      </div>
+      <button class="btn btn-primary" onclick="generateChecklist()">Generate checklist →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="ob-result" class="hidden">
+    <div class="result-header">
+      <div>
+        <div class="result-title" id="ob-result-name"></div>
+        <div class="result-meta" id="ob-result-meta"></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-ghost btn-sm" onclick="reset('ob')">Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="alert('Link copied to clipboard!')">Share ↗</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label" style="color:var(--coral)">Pre-Start</div>
+      <div id="ob-prestart"></div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--teal)">Day 1</div>
+      <div id="ob-day1"></div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--purple)">Week 1</div>
+      <div id="ob-week1"></div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--navy)">30-60-90 Day Goals</div>
+      <div id="ob-plan"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PANEL 2: BENEFITS FAQ
+═══════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-benefits">
+  <div id="bf-form">
+    <div class="page-title">Benefits FAQ generator</div>
+    <div class="page-sub">A structured employee-facing FAQ ready to share on day one of open enrollment</div>
+    <div class="card" style="max-width:540px">
+      <div class="form-row"><label class="field-label">Company name</label><input type="text" id="bf-company" placeholder="Luminary Labs" /></div>
+      <div class="form-row">
+        <label class="field-label">Benefits package type</label>
+        <select id="bf-pkg">
+          <option value="basic">Basic — medical only</option>
+          <option value="standard">Standard — medical, dental, vision</option>
+          <option value="comprehensive" selected>Comprehensive — medical, dental, vision, 401k, FSA, parental leave</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="field-label">Company size</label>
+        <select id="bf-size">
+          <option>1–25 employees</option>
+          <option selected>26–100 employees</option>
+          <option>101–250 employees</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="generateFAQ()">Generate FAQ →</button>
+    </div>
+  </div>
+
+  <div id="bf-result" class="hidden">
+    <div class="result-header">
+      <div>
+        <div class="result-title" id="bf-result-title"></div>
+        <div class="result-meta" id="bf-result-meta"></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-ghost btn-sm" onclick="reset('bf')">Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="alert('PDF downloaded!')">Download PDF</button>
+      </div>
+    </div>
+    <div id="bf-sections"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PANEL 3: VALUES MICROSITE
+═══════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-values">
+  <div id="vm-form">
+    <div class="page-title">Values microsite</div>
+    <div class="page-sub">A branded culture page with behaviors and expectations — no design agency required</div>
+    <div class="card" style="max-width:540px">
+      <div class="form-row"><label class="field-label">Company name</label><input type="text" id="vm-company" value="Luminary Labs" /></div>
+      <div class="form-row"><label class="field-label">Industry</label><input type="text" id="vm-industry" value="B2B SaaS" /></div>
+      <div class="form-row">
+        <label class="field-label">Company values (comma separated, up to 5)</label>
+        <input type="text" id="vm-values" value="Move Fast, Own It, Be Human, Think Big" />
+        <div style="font-size:12px;color:var(--mist);margin-top:6px">Try: Move Fast, Own It, Be Human, Think Big</div>
+      </div>
+      <button class="btn btn-primary" onclick="generateValues()">Build microsite →</button>
+    </div>
+  </div>
+
+  <div id="vm-result" class="hidden">
+    <div style="text-align:right;margin-bottom:12px">
+      <button class="btn btn-ghost btn-sm" onclick="reset('vm')">Edit values</button>
+    </div>
+    <div class="values-hero">
+      <div class="values-hero-eyebrow" id="vm-industry-out"></div>
+      <div class="values-hero-title" id="vm-hero-title"></div>
+      <div class="values-hero-sub">These are not aspirations. They are the behaviors we hire for, promote on, and hold each other to.</div>
+    </div>
+    <div class="values-body" id="vm-cards"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     PANEL 4: COMMAND CENTER
+═══════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-command">
+  <div class="page-title">Multi-client command center</div>
+  <div class="page-sub">One hub for every client — task lists, deadlines, hiring pipeline, and a Today view across your whole practice</div>
+
+  <div class="cc-shell">
+    <!-- Sidebar -->
+    <div class="cc-sidebar">
+      <div class="cc-sidebar-head">Build with Winslow</div>
+      <button class="cc-today-btn" id="cc-today-btn" onclick="ccView('today')">⚡ Today</button>
+      <div class="cc-section-label">Clients</div>
+      <button class="cc-client-btn active" id="cc-btn-luminary" onclick="ccView('luminary')">
+        <div class="name">Luminary Labs</div><div class="meta">42 people · 3 open</div>
+      </button>
+      <button class="cc-client-btn" id="cc-btn-beacon" onclick="ccView('beacon')">
+        <div class="name">Beacon Health</div><div class="meta">18 people · 2 open</div>
+      </button>
+      <button class="cc-client-btn" id="cc-btn-crestwood" onclick="ccView('crestwood')">
+        <div class="name">Crestwood AI</div><div class="meta">9 people · 4 open</div>
+      </button>
+    </div>
+
+    <!-- Main -->
+    <div class="cc-main" id="cc-main"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="site-footer">
+  These are interactive previews of what participants will build on Jul 9. All data is fictional — no PII, comp, performance, or medical data anywhere.
+</div>
+
+<script>
+// ── TAB SWITCHING ──────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function reset(prefix) {
+  document.getElementById(prefix + '-form').classList.remove('hidden');
+  document.getElementById(prefix + '-result').classList.add('hidden');
+}
+
+// ── BUILD 1: ONBOARDING CHECKLIST ─────────────────────────────────────────────
+const OB_TASKS = {
+  Engineering: {
+    preStart: ['Set up laptop and dev environment','Request GitHub org access','Add to engineering Slack channels','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','Join company all-hands or standup','Codebase walkthrough with tech lead'],
+    week1:    ['Complete first PR review','Set up local dev environment end-to-end','Shadow two team standups','Complete security and compliance training'],
+    plan:     ['Own one small feature end-to-end (30 days)','Complete first sprint solo (60 days)','Contribute to an architecture discussion (90 days)'],
+  },
+  Sales: {
+    preStart: ['Set up CRM access','Add to sales Slack channels','Prepare product demo credentials','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','Product demo walkthrough with manager','Review ICP and target account list'],
+    week1:    ['Shadow 3 discovery calls','Complete product certification module','Build first 10-account pipeline list','Complete security and compliance training'],
+    plan:     ['Run first solo discovery call (30 days)','Close first deal (60 days)','Hit 50% of quota (90 days)'],
+  },
+  'People Ops': {
+    preStart: ['Set up HRIS access','Add to HR Slack channels','Share policy library and handbook','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','Benefits system walkthrough','Review open headcount and active roles'],
+    week1:    ['Audit current onboarding process','Meet each department head','Review benefits enrollment status','Complete compliance training'],
+    plan:     ['Own one full onboarding cycle (30 days)','Deliver first people report (60 days)','Complete HR audit for one client (90 days)'],
+  },
+  Marketing: {
+    preStart: ['Set up brand asset access','Add to marketing Slack channels','Share editorial calendar','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','Brand guidelines walkthrough','Review current campaign roadmap'],
+    week1:    ['Complete brand voice training','Shadow content review meeting','Review top 5 performing assets','Complete compliance training'],
+    plan:     ['Publish first owned asset (30 days)','Own one campaign end-to-end (60 days)','Present performance report (90 days)'],
+  },
+  Finance: {
+    preStart: ['Set up accounting system access','Add to finance Slack channels','Share chart of accounts','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','Finance systems walkthrough','Review current budget model'],
+    week1:    ['Complete expense policy training','Shadow month-end close process','Review vendor contracts list','Complete compliance training'],
+    plan:     ['Own one budget category (30 days)','Complete first solo close (60 days)','Present variance analysis (90 days)'],
+  },
+  'Customer Success': {
+    preStart: ['Set up CS platform access','Add to CS Slack channels','Assign first client account shadowing','Send welcome email with Day 1 logistics'],
+    day1:     ['Meet your onboarding buddy','Complete I-9 and new hire paperwork','CS platform walkthrough','Review key accounts overview'],
+    week1:    ['Shadow 3 customer calls','Review open tickets and escalations','Complete product training module','Complete security and compliance training'],
+    plan:     ['Own one account independently (30 days)','Achieve first renewal (60 days)','Hit NPS target for your accounts (90 days)'],
+  },
+};
+
+const OB_COLORS = { preStart: 'var(--coral)', day1: 'var(--teal)', week1: 'var(--purple)', plan: 'var(--navy)' };
+
+function makeCheckItems(containerId, items, color) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach((text, i) => {
+    const div = document.createElement('div');
+    div.className = 'check-item';
+    div.innerHTML = `
+      <div class="check-box" id="cb-${containerId}-${i}"><span class="tick">✓</span></div>
+      <span class="check-text" id="ct-${containerId}-${i}">${text}</span>`;
+    div.onclick = () => {
+      const box = document.getElementById('cb-' + containerId + '-' + i);
+      const txt = document.getElementById('ct-' + containerId + '-' + i);
+      box.classList.toggle('checked');
+      txt.classList.toggle('done');
+    };
+    el.appendChild(div);
+  });
+}
+
+function generateChecklist() {
+  const name    = document.getElementById('ob-name').value || 'New Hire';
+  const title   = document.getElementById('ob-title').value || 'Team Member';
+  const dept    = document.getElementById('ob-dept').value;
+  const start   = document.getElementById('ob-start').value || 'TBD';
+  const location= document.getElementById('ob-location').value;
+  const company = document.getElementById('ob-company').value || 'Your Company';
+  const tasks   = OB_TASKS[dept] || OB_TASKS.Engineering;
+
+  document.getElementById('ob-result-name').textContent = name + ' Onboarding';
+  document.getElementById('ob-result-meta').textContent = company + ' · ' + title + ' · ' + dept + ' · ' + location + ' · Starts ' + start;
+
+  makeCheckItems('ob-prestart', tasks.preStart, OB_COLORS.preStart);
+  makeCheckItems('ob-day1',     tasks.day1,     OB_COLORS.day1);
+  makeCheckItems('ob-week1',    tasks.week1,    OB_COLORS.week1);
+  makeCheckItems('ob-plan',     tasks.plan,     OB_COLORS.plan);
+
+  document.getElementById('ob-form').classList.add('hidden');
+  document.getElementById('ob-result').classList.remove('hidden');
+}
+
+// ── BUILD 2: BENEFITS FAQ ──────────────────────────────────────────────────────
+const FAQ_SECTIONS = {
+  'Health Coverage': [
+    ['When does health coverage start?', 'Coverage begins on your first day of employment. You will receive an enrollment email from [Benefits Provider] within 48 hours of your start date.'],
+    ['What plans are available?', 'We offer three medical plan tiers: [Plan A - HMO], [Plan B - PPO], and [Plan C - HDHP with HSA]. Full plan details are available in the benefits portal.'],
+    ['Can I add dependents?', 'Yes. Spouses, domestic partners, and dependent children up to age 26 are eligible. Add them during enrollment or within 30 days of a qualifying life event.'],
+    ['Is dental and vision included?', 'Yes. Dental covers preventive care at 100% and major work at [X]%. Vision covers annual exams and a [frames or contacts] allowance per year.'],
+  ],
+  'Time Off': [
+    ['How much PTO do I get?', 'Full-time employees accrue [X] days of PTO per year. Part-time accrual is prorated. Your balance appears after your first pay period.'],
+    ['How do I request time off?', 'Submit requests through [HRIS system] at least [X] business days in advance. Emergency leave goes directly to your manager.'],
+    ['Does PTO roll over?', 'Up to [X] days roll over into the new calendar year. Balances above that are forfeited on January 1.'],
+  ],
+  'Retirement': [
+    ['When can I enroll in the 401k?', 'You are eligible on your first day. Set up contributions through [401k Provider] at [url].'],
+    ['Does the company match?', 'Yes. We match [X]% of your contributions up to [X]% of your salary. Matching vests over [X] years.'],
+  ],
+  'Family and Parental Leave': [
+    ['What is the parental leave policy?', 'Primary caregivers receive [X] weeks of fully paid leave. Secondary caregivers receive [X] weeks. Leave can begin up to 2 weeks before the due date.'],
+    ['Does this cover adoption and foster placement?', 'Yes. Parental leave applies equally to birth, adoption, and foster placement.'],
+  ],
+  'How to Enroll': [
+    ['How do I enroll in benefits?', 'Log into [Benefits Portal] within your first 30 days. Select your plans, add dependents if applicable, and submit. You will receive a confirmation email.'],
+    ['What if I miss the enrollment window?', 'You can only change elections during open enrollment (typically November) or within 30 days of a qualifying life event such as marriage, birth, or loss of other coverage.'],
+  ],
+};
+
+const SECTION_COLORS = ['var(--teal)','var(--coral)','var(--purple)','var(--navy)','#2D8A6E'];
+
+function generateFAQ() {
+  const company = document.getElementById('bf-company').value || 'Your Company';
+  const pkg     = document.getElementById('bf-pkg').options[document.getElementById('bf-pkg').selectedIndex].text;
+  const size    = document.getElementById('bf-size').value;
+
+  document.getElementById('bf-result-title').textContent = company + ' Benefits FAQ';
+  document.getElementById('bf-result-meta').textContent  = pkg + ' · ' + size + ' · Fields in [brackets] need your plan details';
+
+  const container = document.getElementById('bf-sections');
+  container.innerHTML = '';
+
+  Object.entries(FAQ_SECTIONS).forEach(([section, items], si) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    let html = `<div class="section-label" style="color:${SECTION_COLORS[si]}">${section}</div>`;
+    items.forEach(([q, a]) => {
+      html += `<div class="faq-item"><div class="faq-q">Q: ${q}</div><div class="faq-a">${a}</div></div>`;
+    });
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+
+  document.getElementById('bf-form').classList.add('hidden');
+  document.getElementById('bf-result').classList.remove('hidden');
+}
+
+// ── BUILD 3: VALUES MICROSITE ──────────────────────────────────────────────────
+const VALUE_DETAILS = {
+  'Move Fast': {
+    desc: 'Speed is a feature. We ship, learn, and iterate rather than waiting for perfect. Momentum compounds.',
+    looks: ['You ship a working MVP before the plan feels complete','You flag blockers the moment they appear, not at the next standup','You default to async decisions to keep work moving'],
+    oob: 'Moving fast on something you know is wrong.',
+  },
+  'Own It': {
+    desc: 'Ownership means the outcome is yours — not just the task. You do not wait to be asked and you do not hand off problems.',
+    looks: ['You raise issues with a proposed solution, not just the problem','You follow up without being chased','You own mistakes openly and move to fix them'],
+    oob: 'Doing your part and assuming someone else will handle the rest.',
+  },
+  'Be Human': {
+    desc: 'Behind every Slack message is a person with a life outside work. We build for humans, treat each other like humans, and lead with empathy.',
+    looks: ['You assume positive intent before asking for clarification','You give feedback you would want to receive','You acknowledge the person before diving into the task'],
+    oob: 'Optimizing for efficiency at the cost of the people around you.',
+  },
+  'Think Big': {
+    desc: 'The best ideas start uncomfortable. We set ambitious targets, ask hard questions, and resist the pull of incremental thinking.',
+    looks: ['You challenge scope before accepting it as fixed','You bring a 10x idea to every planning cycle, even if it does not ship','You learn from adjacent industries, not just your own'],
+    oob: 'Dreaming without a plan to make it real.',
+  },
+};
+const VALUE_COLORS = ['var(--teal)','var(--coral)','var(--purple)','#2D8A6E','#C4842B'];
+
+function generateValues() {
+  const company  = document.getElementById('vm-company').value || 'Your Company';
+  const industry = document.getElementById('vm-industry').value || 'Technology';
+  const rawVals  = document.getElementById('vm-values').value;
+  const vals     = rawVals.split(',').map(v => v.trim()).filter(Boolean).slice(0, 5);
+
+  document.getElementById('vm-industry-out').textContent = industry;
+  document.getElementById('vm-hero-title').textContent   = 'How we work at ' + company;
+
+  const container = document.getElementById('vm-cards');
+  let html = '';
+  vals.forEach((val, i) => {
+    const d = VALUE_DETAILS[val] || {
+      desc: `We take ${val.toLowerCase()} seriously at ${company}. It shapes how we make decisions, treat each other, and show up every day.`,
+      looks: [`You demonstrate ${val.toLowerCase()} in how you approach hard problems`, `You hold yourself and teammates to the standard ${val.toLowerCase()} requires`, `You recognize ${val.toLowerCase()} in others and call it out`],
+      oob: `Claiming ${val.toLowerCase()} without showing it in your actions.`,
+    };
+    const color = VALUE_COLORS[i % VALUE_COLORS.length];
+    const divider = i < vals.length - 1 ? `<div style="height:1px;background:var(--border);margin-top:24px"></div>` : '';
+    html += `
+      <div class="value-card">
+        <div class="value-stripe" style="background:${color};height:auto;min-height:60px"></div>
+        <div class="value-body" style="flex:1">
+          <h3>${val}</h3>
+          <div class="value-desc">${d.desc}</div>
+          <div class="section-label" style="color:${color}">What it looks like</div>
+          ${d.looks.map(l => `<div class="value-look"><span class="value-arrow" style="color:${color}">→</span><span>${l}</span></div>`).join('')}
+          <div class="oob"><strong>Out of bounds:</strong> ${d.oob}</div>
+        </div>
+      </div>${divider}`;
+  });
+  html += `
+    <div class="values-footer">
+      <div class="values-footer-title">Culture is not what we say. It is what we do.</div>
+      <div class="values-footer-sub">These values are how we hire, how we lead, and how we grow at ${company}.</div>
+    </div>`;
+
+  container.innerHTML = html;
+  document.getElementById('vm-form').classList.add('hidden');
+  document.getElementById('vm-result').classList.remove('hidden');
+}
+
+// ── BUILD 4: COMMAND CENTER ────────────────────────────────────────────────────
+const CC_DATA = {
+  luminary: {
+    name: 'Luminary Labs', headcount: 42, openRoles: 3,
+    tasks: [
+      { text: 'Send offer letter to Priya M.', due: 'Jun 28', done: false },
+      { text: 'Submit Q2 headcount report', due: 'Jun 30', done: false },
+      { text: 'Benefits renewal kickoff call', due: 'Jul 5', done: true },
+    ],
+    deadlines: ['COBRA notice due Jul 1','Open enrollment window Jul 15-31','New hire 90-day review Jul 9'],
+    pipeline: { Sourcing: 8, Screening: 4, Interview: 2, Offer: 1 },
+  },
+  beacon: {
+    name: 'Beacon Health', headcount: 18, openRoles: 2,
+    tasks: [
+      { text: 'Update employee handbook — PTO policy', due: 'Jun 27', done: false },
+      { text: 'Schedule stay interviews for Q3', due: 'Jul 3', done: false },
+      { text: 'Process new hire paperwork — Jordan K.', due: 'Jul 8', done: false },
+    ],
+    deadlines: ['ACA reporting deadline Jun 30','Performance review cycle starts Jul 1'],
+    pipeline: { Sourcing: 3, Screening: 2, Interview: 1, Offer: 0 },
+  },
+  crestwood: {
+    name: 'Crestwood AI', headcount: 9, openRoles: 4,
+    tasks: [
+      { text: 'Build job descriptions for 4 open roles', due: 'Jun 30', done: false },
+      { text: 'Set up HRIS — recommend vendor', due: 'Jul 7', done: false },
+      { text: 'Draft parental leave policy', due: 'Jul 14', done: false },
+    ],
+    deadlines: ['Series A close expected Jul 1 — headcount plan needed','I-9 reverification for 2 employees Jul 15'],
+    pipeline: { Sourcing: 12, Screening: 5, Interview: 0, Offer: 0 },
+  },
+};
+
+const PIPE_COLORS = ['var(--mist)','var(--purple)','var(--teal)','var(--coral)'];
+let ccActiveClient = 'luminary';
+let ccActiveView   = 'luminary';
+
+function ccView(view) {
+  ccActiveView = view;
+  // update sidebar buttons
+  document.getElementById('cc-today-btn').classList.toggle('active', view === 'today');
+  ['luminary','beacon','crestwood'].forEach(k => {
+    document.getElementById('cc-btn-' + k).classList.toggle('active', view === k);
+  });
+  if (view !== 'today') ccActiveClient = view;
+  renderCC();
+}
+
+function ccToggleTask(clientKey, idx) {
+  CC_DATA[clientKey].tasks[idx].done = !CC_DATA[clientKey].tasks[idx].done;
+  renderCC();
+}
+
+function renderCC() {
+  const main = document.getElementById('cc-main');
+  if (ccActiveView === 'today') {
+    const urgent = Object.entries(CC_DATA)
+      .flatMap(([key, c]) => c.tasks.filter(t => !t.done).map(t => ({ ...t, client: c.name })))
+      .slice(0, 7);
+    main.innerHTML = `
+      <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--navy);margin-bottom:4px;font-weight:600">Today across all clients</div>
+      <div style="font-size:13px;color:var(--mist);margin-bottom:20px">Most urgent open items across your practice</div>
+      ${urgent.map(t => `
+        <div class="today-item">
+          <div class="today-dot"></div>
+          <div class="today-text">
+            <div class="t-task">${t.text}</div>
+            <div class="t-client">${t.client}</div>
+          </div>
+          <div class="today-due">${t.due}</div>
+        </div>`).join('')}`;
+    return;
+  }
+
+  const c = CC_DATA[ccActiveClient];
+  const pipeKeys = Object.keys(c.pipeline);
+  const pipeMax  = 15;
+
+  main.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--navy);font-weight:600">${c.name}</div>
+      <span style="background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em">${c.headcount} employees</span>
+    </div>
+    <div class="cc-metrics">
+      <div class="cc-metric">
+        <div class="metric-label">Headcount</div>
+        <div class="metric-value" style="color:var(--navy)">${c.headcount}</div>
+      </div>
+      <div class="cc-metric">
+        <div class="metric-label">Open roles</div>
+        <div class="metric-value" style="color:var(--coral)">${c.openRoles}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--teal)">Open tasks</div>
+      ${c.tasks.map((t, i) => `
+        <div class="task-row" onclick="ccToggleTask('${ccActiveClient}', ${i})">
+          <div class="task-box ${t.done ? 'done' : ''}"><span style="color:var(--white);font-size:10px;font-weight:700">${t.done ? '✓' : ''}</span></div>
+          <span class="task-text ${t.done ? 'done' : ''}">${t.text}</span>
+          <span class="task-due">${t.due}</span>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--coral)">Upcoming deadlines</div>
+      ${c.deadlines.map(d => `<div class="deadline-row">📌 ${d}</div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="section-label" style="color:var(--purple)">Hiring pipeline</div>
+      ${pipeKeys.map((label, i) => `
+        <div class="pipeline-row">
+          <div class="pipeline-row-head"><span>${label}</span><span style="font-weight:600">${c.pipeline[label]}</span></div>
+          <div class="pipeline-track">
+            <div class="pipeline-fill" style="width:${Math.min((c.pipeline[label]/pipeMax)*100,100)}%;background:${PIPE_COLORS[i]}"></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// init command center on load
+renderCC();
+</script>
+</body>
+</html>
